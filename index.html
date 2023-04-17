@@ -15,14 +15,14 @@
 <body>
 <header>
     <nav>
+        <img class="hb" id="logo" src="images/icon.png">
         <button class="hb"><a href="#">Startseite</a></button>
         <button class="hb"><a href="#">Über uns</a></button>
         <button class="hb"><a href="#">Leistungen</a></button>
-        <button class="hb"><a href="#">Kontakt</a></button>
     </nav>
 </header>
 <main>
-    <!-- Hier kommt der Inhalt der Webseite -->
+
 </main>
 <footer>
     <!-- Hier kommt der Footer der Webseite -->
@@ -31,7 +31,7 @@
 </html>
 <style>
     * {
-        background-color: #121119;
+        background-color: #1b1c28;
     }
     html, body {
         color: white;
@@ -39,9 +39,8 @@
     }
 
     nav {
-        background-color: #151525;
-        height: 50px;
-        border-bottom: #20a9f1 solid 1px;
+        background-color: #121119;
+        height: 51px;
         margin: 0;
         padding: 0;
         list-style: none;
@@ -49,15 +48,15 @@
     }
 
 
-    nav button {
+    .hb {
         float: left;
         width: 25%;
-        height: 51px;
+        height: 50px;
         margin-top: 0px;
         border: none;
         transition: all 0.5s;
         z-index: 0;
-        background-color: #2c0f22;
+        background-color: #121119;
     }
 
     nav a {
@@ -66,10 +65,11 @@
         text-align: center;
         line-height: 50px;
         text-decoration: none;
-        background-color: #2c0f22;
+        background-color: #121119;
         z-index: 0;
         color: white;
         font-family: Candara;
+        font-size: 23px;
     }
 
     button {
@@ -95,6 +95,11 @@
 
     button:hover::before {
         width: 100%;
+    }
+
+    #logo {
+        width: 5%;
+        margin-left: 10px;
     }
 
 </style>
