@@ -15,6 +15,9 @@
     padding: 10px 10px 40px;
     background-color: #1b1c28;
     color: blue;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 .gameElement li.needed_ship {
     color: red;
@@ -22,6 +25,9 @@
 .gameElement h2 {
     text-align: center;
     color: blue;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 .gameElement button {
     width: 100%;
@@ -30,6 +36,9 @@
     background-color: green;
     color: white;
     cursor: pointer;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 .gameElement .water_container {
     width: 100%;
@@ -37,18 +46,30 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 .gameElement .water {
     width: 350px;
     height: 350px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 .gameElement .water_container .row {
     width: 100%;
     box-sizing: border-box;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 .gameElement .field img {
     height: 100%;
     width: 100%;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 .gameElement .field {
     float: left;
@@ -57,6 +78,9 @@
     box-sizing: border-box;
     cursor: pointer;
     border: 1px solid lightblue;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 .gameElement .field:not(.ship) {
 

@@ -132,6 +132,7 @@ class GameField {
                 this.setText("Gegnerische Flotte:");
                 break;
         }
+        this.update();
     }
     scan_ships(){
         let ships = {};
@@ -178,7 +179,7 @@ class GameField {
                     }
                 }.bind(this));
                 if(!error) {
-                    html += '<button>🏁 Spiel Starten 🏁</button>';
+                    html += '<button onclick="start_game();">🏁 Spiel Starten 🏁</button>';
                 } else {
                     if(invalid_types.length > 0 && !invalid_count){
                         html += '<div style="color: red; text-align: left; ">Folgende Schiffe werden in diesem Spiel Modi nicht unterstützt: <br><ul>';
@@ -231,6 +232,5 @@ class GameField {
     }
 }
 window.onload = function(){
-    window.me = new GameField(0);
-    window.gegener = new GameField(2);
+    window.my_field = new GameField(0);
 }
