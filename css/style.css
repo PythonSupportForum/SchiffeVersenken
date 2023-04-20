@@ -1,3 +1,11 @@
+#game_info_text {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: lightgray;
+    color: white;
+    text-align: center;
+}
+
 #game_container {
     width: 100%;
     display: flex;
@@ -87,4 +95,16 @@
 }
 .gameElement .field.ship {
     background-color: brown;
+}
+.gameElement .field.beaten {
+    background-color: red;
+    background-image:
+            radial-gradient(ellipse at center, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%, rgba(0,0,0,0.7) 100%),
+            radial-gradient(ellipse at center, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%, rgba(0,0,0,0.5) 100%),
+            radial-gradient(ellipse at center, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%, rgba(0,0,0,0.7) 100%),
+            radial-gradient(ellipse at center, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%, rgba(0,0,0,0.9) 100%),
+            linear-gradient(45deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%, rgba(255,255,255,0.2) 100%),
+            linear-gradient(-45deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%, rgba(255,255,255,0.2) 100%);
+    background-blend-mode: lighten, lighten, lighten, lighten, lighten, lighten;
+    background-size: 20px 20px, 30px 30px, 40px 40px, 50px 50px, 100% 100%, 100% 100%;
 }
