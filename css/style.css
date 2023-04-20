@@ -1,0 +1,90 @@
+#game_container {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    align-content: center;
+    flex-wrap: wrap;
+    margin-top: 50px;
+}
+.gameElement {
+    width: 400px;
+    height: auto;
+    border: 3px solid blue;
+    border-radius: 10px;
+    padding: 10px 10px 40px;
+    background-color: #1b1c28;
+    color: blue;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.gameElement li.needed_ship {
+    color: red;
+}
+.gameElement h2 {
+    text-align: center;
+    color: blue;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.gameElement button {
+    width: 100%;
+    height: 40px;
+    font-size: 24px;
+    background-color: green;
+    color: white;
+    cursor: pointer;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.gameElement .water_container {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.gameElement .water {
+    width: 350px;
+    height: 350px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.gameElement .water_container .row {
+    width: 100%;
+    box-sizing: border-box;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.gameElement .field img {
+    height: 100%;
+    width: 100%;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.gameElement .field {
+    float: left;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    cursor: pointer;
+    border: 1px solid lightblue;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.gameElement .field:not(.ship) {
+
+}
+.gameElement .field.ship {
+    background-color: brown;
+}
