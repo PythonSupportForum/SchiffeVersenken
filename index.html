@@ -22,7 +22,16 @@
     </nav>
 </header>
 <main>
+    <div class="leftbox">
+        Welcome to sinkships where you can play the classic game of Battleship!
+        Battleship is a two-player game where each player has a fleet of ships that they hide on a grid. Players take turns guessing the location of their opponent's ships, and the first player to sink all of their opponent's ships wins.
+        To get started, simply click on PLAY and place your ships. You can also choose the size of the game field to adjust the game's difficulty. You can play against random players or against a friend online. Many different game modes
+        are waiting for you. So Good luck and have fun!
 
+        <h1 class="leftbutton">
+            Rules
+        </h1>
+    </div>
 </main>
 <footer>
     <!-- Hier kommt der Footer der Webseite -->
@@ -40,11 +49,12 @@
 
     nav {
         background-color: #121119;
-        height: 51px;
+        height: 50px;
         margin: 0;
         padding: 0;
         list-style: none;
         z-index: 1;
+        box-shadow: 0 5px 10px -6px #121119;
     }
 
 
@@ -52,7 +62,7 @@
         float: left;
         width: 25%;
         height: 50px;
-        margin-top: 0px;
+        margin-top: -1px;
         border: none;
         transition: all 0.5s;
         z-index: 0;
@@ -91,6 +101,7 @@
         height: 2px;
         background-color: #20a9f1;
         transition: width 0.3s ease-in-out;
+
     }
 
     button:hover::before {
@@ -98,8 +109,43 @@
     }
 
     #logo {
-        width: 5%;
+        width: 80px;
+        height: auto;
         margin-left: 10px;
+        background-color: transparent;
+        transform: translateY(-15px);
     }
+    .leftbutton {
+        font-size: 70px;
+        text-align: center;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-family: helvetica, arial, sans-serif;
+        font-weight: 800;
+        color: #121119;
+        transition: all 0.5s;
+        -webkit-text-stroke-width: 2px;
+        -webkit-text-stroke-color: white;
+        background-color: transparent;
+        margin-top: 0px;
+    }
+
+
+    .leftbox {
+        background-color: #121119;
+        width: 500px;
+        height: 550px;
+        position: fixed;
+        left: 5%;
+        top: 150px;
+        border-radius: 15px;
+        box-shadow: 0px 0px 5px 0px #121119;
+        font-family: Helvetica;
+        padding: 25px;
+        font-size: 25px;
+        text-align: justify;
+        letter-spacing: 2px;
+    }
+
 
 </style>
