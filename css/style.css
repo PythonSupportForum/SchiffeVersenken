@@ -1,3 +1,9 @@
+.clearfix::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
 #game_info_text {
     margin-top: 30px;
     padding: 20px;
@@ -13,7 +19,6 @@
     align-items: center;
     align-content: center;
     flex-wrap: wrap;
-    margin-top: 50px;
 }
 .gameElement {
     width: 400px;
@@ -27,6 +32,16 @@
     -webkit-user-select: none;
     user-select: none;
 }
+.gameElement .footer_info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.gameElement .footer_info ul{
+    text-align: left;
+}
+
 .gameElement li.needed_ship {
     color: red;
 }
@@ -89,12 +104,6 @@
     -moz-user-select: none;
     -webkit-user-select: none;
     user-select: none;
-}
-.gameElement .field:not(.ship) {
-
-}
-.gameElement .field.ship {
-    background-color: brown;
 }
 .gameElement .field.beaten {
     background-color: red;
