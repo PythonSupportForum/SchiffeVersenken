@@ -365,9 +365,9 @@ class GegnerServer {
 
             if(data.id !== this.id) {
                 console.error("Invalid Player ID!");
-                document.getElementById("game_info_text").innerText = "Verbindungsfehler!";
+                if(document.getElementById("game_info_text")) document.getElementById("game_info_text").innerText = "Verbindungsfehler!";
             } else {
-                document.getElementById("game_info_text").innerText = data.info_message;
+                if(document.getElementById("game_info_text")) document.getElementById("game_info_text").innerText = data.info_message;
 
                 my_field.setStatus(data.my_status);
                 gegner_field.setStatus(data.gegner_status);
@@ -384,11 +384,16 @@ class GegnerServer {
 }
 
 window.start_game = function(){
+    if(document.getElementsByClassName("leftbox")[0]) document.getElementsByClassName("leftbox")[0].remove();
+    if(document.getElementsByClassName("rightbox")[0]) document.getElementsByClassName("rightbox")[0].style.width = "100%";
+
+    if(document.getElementById("game_info_text")) document.getElementById("game_info_text").style.display = "block";
+
     my_field.setStatus(1);
 
     window.gegner_field = new GameField(2);
 
-    document.getElementById("game_info_text").innerText = "Verbinden mit Server..";
+    if(document.getElementById("game_info_text")) document.getElementById("game_info_text").innerText = "Verbinden mit Server..";
 
     window.Server = new GegnerServer();
 };
