@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Spielen Sie Schiffe Versenken online gegen Ihre Freunde oder zufällige Gegner auf Schiffe-Versenken">
-    <meta name="keywords" content="Schiffe Versenken, Spiel, Online, Multiplayer">
-    <title>Schiffe Versenken - Online Spiel</title>
+    <meta name="description" content="Spiele das Klassische Schiffe versenken Jetzt digital Online im Browser! Keine Download oder Installation notwendig.">
+    <meta name="keywords" content="Klassisch, Schiffe versenken, Multiplayer, Zusammen, Spielen, Online, Browser">
+    <meta name="author" content="Schiffe Versenken Team">
+    <title>Klassisches Schiffe versenken Online im browser</title>
 
     <link rel="stylesheet" href="css/style.css">
     <script src="js/script.js"></script>
@@ -18,16 +19,36 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="msapplication-config" content="images/browserconfig.xml">
     <meta name="theme-color" content="#000000">
+    <meta name="robots" content="index,follow" />
+
+    <meta name="og:type" content="Browsergame"/>
+    <meta name="og:site_name" content="Sinkships"/>
+    <meta property="og:image" name="twitter:image" content="https://sinkships.com/images/icon.png" />
+    <meta itemprop="image" content="https://sinkships.com/images/icon.png" />
 </head>
 <body>
-
-<h1 style="text-align: center; ">Schiffe Versenken - Online Spiel</h1>
-
-<h2 id="game_info_text">Bitte verstecke deine Schiffe!</h2>
-
-<div id="game_container"></div>
-
-<h2 style="text-align: center; margin-top: 50px; ">Von Lars Ashauer, Einfacher ( Discord: Einfacher#9069 ) und Tilo Behnke</h2>
-
+<header>
+    <nav>
+        <img alt="Schiffe versenken-Logo" class="hb" id="logo" src="images/icon.png">
+        <button class="hb"><a href="/">New Game</a></button>
+        <button class="hb"><a href="games.html">Additionally Gamemodes</a></button>
+        <button class="hb"><a href="https://discord.gg/uxEuabc7qf" target="_blank">Discord</a></button>
+        <button class="hb"><a href="imprint.html">Impressum</a></button>
+    </nav>
+</header>
+<main class="clearfix">
+    <div class="rightbox">
+        <div id="game_info_text" style="width: 100%; text-align: center; height: 80px; display: none; font-size: 24px; font-weight: bold; " ></div>
+        <div id="game_container"></div>
+    </div>
+</main>
+<footer>
+    <p>© 2023 Sinkships.com | <a href="imprint.html">Impressum</a></p>
+</footer>
+<script>
+    window.onload = function(){
+        window.my_field = new GameField(0);
+    }
+</script>
 </body>
 </html>

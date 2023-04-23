@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titel</title>
+</head>
+<script>
+    window.saved_words = localStorage.getItem("saved_words") || {};
+    function cleanString(inputString) {
+        let cleanedString = inputString.toLowerCase();
+        cleanedString = cleanedString.replace(/[^a-z]/g, "");
+        return cleanedString;
+    }
+
+    function checkWord(string) {
+        try {
+            if(string in saved_words) return true;
+        } catch(e){
+            console.log(e);
+        }
+        return new Promise(function(resolve, reject){
+            let url = "https://api.datamuse.com/words?sp=" + string;
+            let options = {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            };
+            fetch(url, options).then((response) => response.json()).then((data) => {
+                if (data.length === 0) {
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            }).catch((error) => {
+                setTimeout(function(){
+                    checkWord(string);
+                }, 1000);
+            });
+        });
+    }
+    function checkWordStart(string) {
+        try {
+            for (let i = 0; i < Object.keys(saved_words).length; i++) {
+                if (Object.keys(saved_words)[i].startsWith(string)) return true;
+            }
+        } catch(e){
+            console.log(e);
+        }
+        return new Promise(function(resolve, reject){
+        let url = "https://api.datamuse.com/words?sp=" + string + "*";
+        let options = {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        };
+        fetch(url, options).then((response) => response.json()).then((data) => {
+                if (data.length === 0) {
+                    resolve(false);
+                } else {
+                    while(Object.keys(saved_words).length > 32) delete saved_words[Object.keys(saved_words)[0]];
+                    data.forEach(function(d){
+                        saved_words[d.word] = true;
+                    });
+                    resolve(true);
+                }
+            }).catch((error) => {
+                setTimeout(function(){
+                    checkWordStart(string);
+                }, 1000);
+            });
+        });
+    }
+    function info(text){
+        document.body.innerHTML += "["+new Date().toString()+"]: "+text+"<br>";
+    }
+    function getField(x, y){
+        if(x < 0) x += field_size;
+        if(y < 0) y += field_size;
+        if(x >= field_size) x -= field_size;
+        if(y >= field_size) y -= field_size;
+
+        return field[x+"_"+y];
+    }
+    async function processField(hatString, hatFields, fieldKey, sx, sy){
+        let x = Number(fieldKey.split("_")[0]);
+        let y = Number(fieldKey.split("_")[1]);
+
+        hatString += getField(x, y);
+        hatFields[x+"_"+y] = true;
+
+        if(!((x+1)+"_"+(y) in hatFields)){
+            if(await checkWordStart(hatString+getField(x+1, y))){
+                await processField(hatString, hatFields, (x+1)+"_"+(y), sx, sy);
+            } else if(await checkWord(hatString+getField(x+1, y)) && (hatString+getField(x+1, y)).length > 2){
+                words[hatString+getField(x+1, y)] = {x: sx, y: sy};
+                showTable();
+            }
+        }
+        if(!((x-1)+"_"+(y) in hatFields)){
+            if(await checkWordStart(hatString+getField(x-1, y))){
+                await processField(hatString, hatFields, (x-1)+"_"+(y), sx, sy);
+            } else if(await checkWord(hatString+getField(x-1, y)) && (hatString+getField(x+1, y)).length > 2){
+                words[hatString+getField(x-1, y)] = {x: sx, y: sy};
+                showTable();
+            }
+        }
+        if(!((x)+"_"+(y+1) in hatFields)){
+            if(await checkWordStart(hatString+getField(x, y+1))){
+                await processField(hatString, hatFields, (x)+"_"+(y+1), sx, sy);
+            } else if(await checkWord(hatString+getField(x, y+1)) && (hatString+getField(x+1, y)).length > 2){
+                words[hatString+getField(x, y+1)] = {x: sx, y: sy};
+                showTable();
+            }
+        }
+        if(!((x)+"_"+(y-1) in hatFields)){
+            if(await checkWordStart(hatString+getField(x, y-1))){
+                await processField(hatString, hatFields, (x)+"_"+(y-1), sx, sy);
+            } else if(await checkWord(hatString+getField(x, y-1)) && (hatString+getField(x+1, y)).length > 2){
+                words[hatString+getField(x, y-1)] = {x: sx, y: sy};
+                showTable();
+            }
+        }
+    }
+    function sortByWordLength(words) {
+        words = Object.keys(words);
+        return words.sort((a, b) => a.length - b.length);
+    }
+    async function showTable(){
+        document.getElementById("words").innerHTML = generateTable(words);
+    }
+    function generateTable(owords) {
+        let words = Object.keys(owords);
+        const sortedWords = words.sort((a, b) => a.length - b.length).reverse();
+
+        const table = document.createElement('table');
+
+        const headerRow = table.insertRow();
+        const wordHeader = headerRow.insertCell();
+        wordHeader.innerText = 'Wort';
+        const lengthHeader = headerRow.insertCell();
+        lengthHeader.innerText = 'Länge';
+        const PosHeader = headerRow.insertCell();
+        PosHeader.innerText = 'Position';
+
+        for (let i = 0; i < sortedWords.length; i++) {
+            const row = table.insertRow();
+            const wordCell = row.insertCell();
+            wordCell.innerText = sortedWords[i];
+            const lengthCell = row.insertCell();
+            lengthCell.innerText = sortedWords[i].length;
+            const PosCell = row.insertCell();
+            PosCell.innerText = owords[sortedWords[i]].x+", "+owords[sortedWords[i]].y;
+        }
+        return table.outerHTML;
+    }
+    window.solve = async function(fieldString){
+        fieldString = cleanString(fieldString);
+
+        let last = localStorage.getItem("last");
+        if(last){
+            if(last != fieldString){
+                localStorage.removeItem("words");
+                localStorage.removeItem("saved_words");
+                localStorage.removeItem("i");
+            }
+        }
+        localStorage.setItem("last", fieldString);
+
+        window.field_size = Math.sqrt(fieldString.length);
+        if(field_size !== Math.round(field_size)) {
+            return info("Das Feld ist nicht Quadratisch. Bitte überprüfe die Eingabe.");
+        }
+        window.field = {};
+        window.words = localStorage.getItem("words") || {};
+        for(let x = 0; x < field_size; x++){
+            for(let y = 0; y < field_size; y++){
+                field[x+"_"+y] = fieldString[(y*field_size)+x];
+            }
+        }
+        info("Feld erfolgreich vorbereitet!");
+        for(let i = (localStorage.getItem("i") || 0); i < Object.keys(field).length; i++){
+            info((i/Object.keys(field).length*100).toFixed(2)+"% abgeschlossen! "+Object.keys(words).length+" Wörter gefunden!");
+            await processField("", {}, Object.keys(field)[i], Object.keys(field)[i].split("_")[0], Object.keys(field)[i].split("_")[1]);
+            localStorage.setItem("saved_words", saved_words);
+            localStorage.setItem("i", i);
+            localStorage.setItem("words", words);
+        }
+        info("Vorgang Abgeschlossen!");
+        info(generateTable(words));
+        console.log(sortByWordLength(words));
+    }
+    window.onload = function(){
+        setTimeout(function(){
+            solve("QYURPAVEETUPMPRARETEUMIRREHCIETWPKCUTRNOHDTNSSZDSRURNOFIEATENCHOBDIEENETBSLIEALIERKHTOHPTUCDGNLNAKKRDASFRNASOMSNBZWETPNDAWLSDECAETKRORLNMEDUOMRLNEMITPLUSLOCLEERDNONAPERAWDAMTIBMAATSVACLGORINALTBTSRIAYCDPSRKRIARUUPTLPCCABEDEETINAIIKSIEDYCHBTUBRMNTREDLSCOCYD");
+        }, 500);
+    };
+</script>
+<body>
+<div id="words"></div>
+</body>
+</html>

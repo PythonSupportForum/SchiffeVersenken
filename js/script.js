@@ -12,7 +12,8 @@ class GameField {
             name: "Kreuzer",
             count: 2
         }
-    }){
+    }, gv = 0){
+        this.gv = gv;
         this.ship_types = ships;
         this.fields = [];
         this.max_ship_length = 0;
@@ -292,6 +293,13 @@ class GameField {
                             let new_src = "images/gameAssets/"+teil+(this.fields[y][x].beaten ? "_dest" : "")+".png";
                             if(new_src !== this.fields[y][x].element.children[0].src) this.fields[y][x].element.children[0].src = new_src;
                             this.fields[y][x].element.children[0].style.transform = "rotate("+(rotation ? 90 : 0)+"deg)";
+
+                            if(this.fields[y][x].beaten && !this.fields[y][x].element.classList.contains("beaten")){
+                                this.fields[y][x].element.classList.add("beaten");
+                            }
+                            if(!this.fields[y][x].beaten && this.fields[y][x].element.classList.contains("beaten")){
+                                this.fields[y][x].element.classList.remove("beaten");
+                            }
                         } else {
                             this.fields[y][x].element.children[0].style.display = "none";
                         }
@@ -307,14 +315,15 @@ class GameField {
                 if(!(y in this.fields)) continue;
                 if(!(x in this.fields[y])) continue;
 
-                if(this.fields[y][x].beaten && !data[y][x].beaten) {
-                    this.fields[y][x].element.classList.remove("beaten");
-                } else if(!this.fields[y][x].beaten && data[y][x].beaten){
-                    this.fields[y][x].element.classList.add("beaten");
-                }
-
                 this.fields[y][x].status = data[y][x].status;
                 this.fields[y][x].beaten = data[y][x].beaten;
+
+                if(this.fields[y][x].beaten && !this.fields[y][x].element.classList.contains("beaten")){
+                    this.fields[y][x].element.classList.add("beaten");
+                }
+                if(!this.fields[y][x].beaten && this.fields[y][x].element.classList.contains("beaten")){
+                    this.fields[y][x].element.classList.remove("beaten");
+                }
             }
         }
         this.update().then(() => {});
@@ -341,28 +350,46 @@ class GegnerServer {
         const formData = new FormData();
         Object.keys(data).forEach(key => formData.append(key, data[key]));
 
-        return new Promise(function(resolve, reject) {
-            let xhr = new XMLHttpRequest();
-            xhr.open('POST', 'https://sinkships.com/ajax/game.php');
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    resolve(JSON.parse(xhr.responseText));
-                } else {
-                    reject(Error('Fehler beim Laden der Daten. Statuscode: ' + xhr.status));
-                }
-            };
-            xhr.onerror = function() {
-                reject(Error('Es ist ein Netzwerkfehler aufgetreten.'));
-            };
-            xhr.send(formData);
-        });
+        document.getElementById("game_info_text").style.color = "white";
+
+        let error_timeout = setTimeout(function(){
+            if(document.getElementById("game_info_text")) {
+                document.getElementById("game_info_text").style.color = "red";
+                document.getElementById("game_info_text").innerText = "Serververbindung fehlgeschlagen!";
+                my_field.setStatus(1);
+                gegner_field.setStatus(3);
+            }
+        }, 5000);
+
+        return new Promise(function(resolve) {
+            function run() {
+                let xhr = new XMLHttpRequest();
+                xhr.open('POST', 'https://sinkships.com/ajax/game.php');
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        try {
+                            clearTimeout(error_timeout);
+                            resolve(JSON.parse(xhr.responseText));
+                        } catch(e){
+                            console.log(e);
+                            setTimeout(run, 100);
+                        }
+                    } else {
+                        setTimeout(run, 100);
+                    }
+                };
+                xhr.onerror = function () {
+                    setTimeout(run, 100);
+                };
+                xhr.send(formData);
+            }
+            run();
+        }.bind(this));
     }
     update(){
         let hit = this.next_hit;
         this.next_hit = false;
-        this.request({id: this.id, action: hit ? "hit" : "update", my_field: JSON.stringify(my_field.export()), hitX: hit ? hit.x : false, hitY: hit ? hit.y : false}).then(function(data){
-            console.log(data);
-
+        this.request({id: this.id, version: my_field.gv, action: hit ? "hit" : "update", my_field: JSON.stringify(my_field.export()), hitX: hit ? hit.x : false, hitY: hit ? hit.y : false}).then(function(data){
             if(data.id !== this.id) {
                 console.error("Invalid Player ID!");
                 if(document.getElementById("game_info_text")) document.getElementById("game_info_text").innerText = "Verbindungsfehler!";
@@ -397,7 +424,3 @@ window.start_game = function(){
 
     window.Server = new GegnerServer();
 };
-
-window.onload = function(){
-    window.my_field = new GameField(0);
-}
