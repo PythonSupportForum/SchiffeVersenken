@@ -12,13 +12,13 @@ class GameField {
             name: "Kreuzer",
             count: 2
         }
-    }, gv = 0){
+    }, gv = 0, random_ships_as_default = true){
         this.gv = gv;
         this.ship_types = ships;
         this.fields = [];
         this.max_ship_length = 0;
-        Object.values(this.ship_types).forEach(function(d){
-            if(d.count > this.max_ship_length) this.max_ship_length = d.count;
+        Object.keys(this.ship_types).forEach(function(l){
+            if(l > this.max_ship_length) this.max_ship_length = Number(l);
         }.bind(this));
         this.h = h;
         this.w = w;
@@ -81,7 +81,7 @@ class GameField {
 
         this.update().then(() => {});
 
-        this.placeShipsRandomly().then(() => {});
+        if(random_ships_as_default) this.placeShipsRandomly().then(() => {});
     }
     checkField(x, y){
         if(this.field_status(this.fields, x, y)) return false;
@@ -89,8 +89,8 @@ class GameField {
         if(this.field_status(this.fields, x-1, y-1) || this.field_status(this.fields, x+1, y+1) || this.field_status(this.fields, x-1, y+1) || this.field_status(this.fields, x+1, y-1)) return;
         let test = JSON.parse(JSON.stringify(this.fields));
         test[y][x] = {status: true};
-        let length = this.ship_length(test, x, y);
-        return length <= this.max_ship_length + 1;
+        let length = this.ship_length(test, x, y)-1;
+        return length <= this.max_ship_length;
     }
     setField(x, y, status = true){
         let fieldData = this.fields[y][x];
@@ -104,11 +104,11 @@ class GameField {
         this.update().then(() => {});
     }
     field_status(fields, x, y){
-        if(x < 0 || x > 9 || y < 0 || y > 9) return false;
+        if(x < 0 || x > this.w-1 || y < 0 || y > this.h-1) return false;
         return fields[y][x].status;
     }
     ship_length(fields, x, y){
-        let length = -1;
+        let length = 0;
         while(this.field_status(fields, x, y)) {
             x++;
         }
@@ -173,7 +173,7 @@ class GameField {
                     let shipLength = parseInt(ship);
                     let shipPlaced = false;
                     while (!shipPlaced) {
-                        let orientation = Math.floor(Math.random() * 2); // 0 for horizontal, 1 for vertical
+                        let orientation = Math.floor(Math.random() * 2);
                         let x = Math.floor(Math.random() * this.w);
                         let y = Math.floor(Math.random() * this.h);
                         let positions = [];
@@ -205,7 +205,7 @@ class GameField {
         for(let y = 0; y < this.h; y++) {
             for (let x = 0; x < this.w; x++) {
                 if(this.field_status(this.fields, x, y)){
-                    let length = this.ship_length(this.fields,x, y);
+                    let length = this.ship_length(this.fields, x, y)-1;
                     ships[length] = ((length in ships) ? ships[length] : 0)+1;
                 }
             }
@@ -418,7 +418,7 @@ window.start_game = function(){
 
     my_field.setStatus(1);
 
-    window.gegner_field = new GameField(2);
+    window.gegner_field = new GameField(2, my_field.w, my_field.h, my_field.ship_types, my_field.gv);
 
     if(document.getElementById("game_info_text")) document.getElementById("game_info_text").innerText = "Verbinden mit Server..";
 
