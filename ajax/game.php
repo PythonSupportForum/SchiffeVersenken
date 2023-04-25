@@ -18,13 +18,12 @@ function generateRandomString($length = 10): string
             $randomString .= $characters[random_int(0, $charactersLength - 1)];
         }
         return $randomString;
-    } catch(Exception $ex) {
+    } catch(Exception $ex){
         return "xyz";
     }
 }
 
-function objectToArray($obj)
-{
+function objectToArray($obj) {
     $arr = is_object($obj) ? get_object_vars($obj) : $obj;
     foreach ($arr as $key => $val) {
         if (is_object($val) || is_array($val)) {
@@ -41,34 +40,29 @@ function checkData($key): bool
     $data = getDataFromFile();
     return isset($data[$key]);
 }
-function removeData($key)
-{
+function removeData($key){
     $data = getDataFromFile();
     unset($data[$key]);
     saveDataToFile($data);
 }
 
-function getData($key)
-{
+function getData($key){
     $data = getDataFromFile();
     return $data[$key] ?? null;
 }
 
-function setData($key, $value)
-{
+function setData($key, $value){
     $data = getDataFromFile();
     $data[$key] = $value;
     saveDataToFile($data);
 }
 
-function getDataFromFile()
-{
+function getDataFromFile(){
     $data = file_get_contents('data.json');
     return json_decode($data, true);
 }
 
-function saveDataToFile($data)
-{
+function saveDataToFile($data){
     $json_data = json_encode($data);
     file_put_contents('data.json', $json_data);
 }
@@ -79,16 +73,16 @@ $playerId = $_POST['id'] ?? "xyz";
 $action = $_POST['action'] ?? "update";
 $field = isset($_POST['my_field']) ? (array)json_decode($_POST['my_field']) : array();
 
-if (checkData("/tmp/".GAME."_players_".$playerId)) {
+if(checkData("/tmp/".GAME."_players_".$playerId)){
     $gameId = getData("/tmp/".GAME."_players_".$playerId);
     $gameData = objectToArray(json_decode(getData("/tmp/".GAME."_games_".$gameId)));
 } else {
     $ok = false;
-    if (checkData("/tmp/".GAME."_waiting_game")) {
+    if(checkData("/tmp/".GAME."_waiting_game")){
         $gameId = getData("/tmp/".GAME."_waiting_game");
         removeData("/tmp/".GAME."_waiting_game");
         $gameData = objectToArray(json_decode(getData("/tmp/".GAME."_games_".$gameId)));
-        if (isset($gameData['a']['last']) && time() - $gameData['a']['last'] > 1) {
+        if(isset($gameData['a']['last']) && time() - $gameData['a']['last'] > 1){
             removeData("/tmp/".GAME."_players_".$gameData['a']['id']);
             removeData("/tmp/".GAME."_games_".$gameId);
             unset($gameData);
@@ -103,7 +97,7 @@ if (checkData("/tmp/".GAME."_players_".$playerId)) {
             $ok = true;
         }
     }
-    if (!$ok) {
+    if(!$ok){
         $gameId = $playerId.generateRandomString(8);
         $gameData = array(
             "started" => false,
@@ -114,14 +108,12 @@ if (checkData("/tmp/".GAME."_players_".$playerId)) {
                 "last" => time()
             ),
             "b" => false,
-            "dran" => ((rand(0, 1) == 1) ? "a" : "b")
+            "dran" => ((rand(0,1) == 1) ? "a" : "b")
         );
         setData("/tmp/".GAME."_games_".$gameId, json_encode($gameData));
         setData("/tmp/".GAME."_waiting_game", $gameId);
     }
-    if (isset($gameId)) {
-        setData("/tmp/".GAME."_players_".$playerId, $gameId);
-    }
+    if(isset($gameId)) setData("/tmp/".GAME."_players_".$playerId, $gameId);
 }
 
 $dran = isset($gameData) && ($gameData["aPlayer"] == $playerId ? "a" : "b") == $gameData["dran"];
@@ -130,31 +122,25 @@ function check_won(): bool
 {
     global $gameData, $playerId;
     $fields = $gameData[($gameData["aPlayer"] == $playerId ? "b" : "a")]['field'];
-    foreach ($fields as $row) {
+    foreach($fields as $row) {
         foreach ($row as $f) {
-            if (!isset($f['status'])) {
-                $f['status'] = false;
-            }
-            if (!isset($f['beaten'])) {
-                $f['beaten'] = false;
-            }
-            if ($f['status'] && !$f['beaten']) {
-                return false;
-            }
+            if(!isset($f['status'])) $f['status'] = false;
+            if(!isset($f['beaten'])) $f['beaten'] = false;
+            if($f['status'] && !$f['beaten']) return false;
         }
     }
     return true;
 }
 
-if (isset($gameData['started']) && $gameData['started'] && check_won()) {
+if(isset($gameData['started']) && $gameData['started'] && check_won()){
     $gameData['winner'] = ($gameData["aPlayer"] == $playerId ? "a" : "b");
 }
 
-if (isset($gameData) && !$gameData['started']) {
+if(isset($gameData) && !$gameData['started']) {
     $infoText = "Warten auf Gegner..";
     $my_status = 1;
     $gegner_status = 2;
-} elseif (isset($gameData['winner'])) {
+} else if(isset($gameData['winner'])) {
     if ($gameData['winner'] == ($gameData["aPlayer"] == $playerId ? "a" : "b")) {
         $infoText = "Du hast Gewonnen!";
         $my_status = 1;
@@ -164,12 +150,12 @@ if (isset($gameData) && !$gameData['started']) {
         $my_status = 6;
         $gegner_status = 3;
     }
-} elseif (isset($gameData) && (isset($gameData['leaved']) || time()-$gameData[($gameData["aPlayer"] == $playerId ? "b" : "a")]['last'] > 8)) {
+} else if(isset($gameData) && (isset($gameData['leaved']) || time()-$gameData[($gameData["aPlayer"] == $playerId ? "b" : "a")]['last'] > 8)){
     $gameData['leaved'] = true;
     $infoText = "Dein Gegner hat das Spiel verlassen!";
     $my_status = 1;
     $gegner_status = 3;
-} elseif ($dran) {
+} else if($dran){
     $infoText = "Du bist dran!";
     $my_status = 1;
     $gegner_status = 4;
@@ -179,30 +165,28 @@ if (isset($gameData) && !$gameData['started']) {
     $gegner_status = 3;
 }
 
-if ($action == "hit" && $dran) {
+if($action == "hit" && $dran) {
     $hitX = $_POST['hitX'];
     $hitY = $_POST['hitY'];
 
     $gameData[($gameData["aPlayer"] == $playerId ? "b" : "a")]['field'][$hitY][$hitX]['beaten'] = true;
 
-    if (!isset($gameData[($gameData["aPlayer"] == $playerId ? "b" : "a")]['field'][$hitY][$hitX]['status']) || !$gameData[($gameData["aPlayer"] == $playerId ? "b" : "a")]['field'][$hitY][$hitX]['status']) {
+    if(!isset($gameData[($gameData["aPlayer"] == $playerId ? "b" : "a")]['field'][$hitY][$hitX]['status']) || !$gameData[($gameData["aPlayer"] == $playerId ? "b" : "a")]['field'][$hitY][$hitX]['status']){
         $gameData["dran"] = ($gameData["aPlayer"] == $playerId ? "b" : "a");
     }
 }
 
 $gameData[($gameData["aPlayer"] == $playerId ? "a" : "b")]['last'] = time();
 
-if (isset($gameId)) {
-    setData("/tmp/".GAME."_games_".$gameId, json_encode($gameData));
-}
+if(isset($gameId)) setData("/tmp/".GAME."_games_".$gameId, json_encode($gameData));
 
 function show_all_beaten_fields($field): array
 {
     $newField = array();
-    foreach ($field as $row) {
+    foreach($field as $row){
         $rowFields = array();
-        foreach ($row as $f) {
-            if (isset($f['status']) && $f['status']) {
+        foreach($row as $f){
+            if(isset($f['status']) && $f['status']){
                 $f['status'] = true;
             } else {
                 $f['status'] = false;

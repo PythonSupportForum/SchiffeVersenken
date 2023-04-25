@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+          content="Spiele Schiffe Versenken online und fordere deine Freunde heraus! Erfahre mehr über unser kostenloses Online-Spiel und werde Teil unserer Community.">
+    <meta name="keywords" content="Schiffe Versenken, Online-Spiel, kostenlos, spielen, Community">
+    <meta name="author" content="Schiffe Versenken Team">
+    <title>Schiffe Versenken - Das Online-Spiel</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/script.js"></script>
+    <link rel="icon" href="favicon.ico">
+</head>
+<body>
+<header>
+    <nav>
+        <img class="hb" id="logo" src="images/icon.png">
+        <button class="hb"><a href="#">Startseite</a></button>
+        <button class="hb"><a href="#">Über uns</a></button>
+        <button class="hb"><a href="#">Leistungen</a></button>
+    </nav>
+</header>
+<main>
+
+</main>
+<footer>
+    <!-- Hier kommt der Footer der Webseite -->
+</footer>
+</body>
+</html>
+<style>
+    * {
+        background-color: #1b1c28;
+    }
+    html, body {
+        color: white;
+        font-family: GDT;
+    }
+
+    nav {
+        background-color: #121119;
+        height: 51px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        z-index: 1;
+    }
+
+
+    .hb {
+        float: left;
+        width: 25%;
+        height: 50px;
+        margin-top: 0px;
+        border: none;
+        transition: all 0.5s;
+        z-index: 0;
+        background-color: #121119;
+    }
+
+    nav a {
+        display: block;
+        color: white;
+        text-align: center;
+        line-height: 50px;
+        text-decoration: none;
+        background-color: #121119;
+        z-index: 0;
+        color: white;
+        font-family: Candara;
+        font-size: 23px;
+    }
+
+    button {
+        border-bottom: 2px solid transparent;
+        position: relative;
+        transition: border-bottom-color 0.3s ease-in-out;
+    }
+
+    button:hover {
+        border-bottom-color: #20a9f1;
+    }
+
+    button::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0%;
+        height: 2px;
+        background-color: #20a9f1;
+        transition: width 0.3s ease-in-out;
+    }
+
+    button:hover::before {
+        width: 100%;
+    }
+
+    #logo {
+        width: 5%;
+        margin-left: 10px;
+    }
+
+</style>
