@@ -150,7 +150,7 @@ if(isset($gameData) && !$gameData['started']) {
         $my_status = 6;
         $gegner_status = 3;
     }
-} else if(isset($gameData) && (isset($gameData['leaved']) || time()-$gameData[($gameData["aPlayer"] == $playerId ? "b" : "a")]['last'] > 8)){
+} else if(isset($gameData) && (isset($gameData['leaved']) || time()-$gameData[($gameData["aPlayer"] == $playerId ? "b" : "a")]['last'] > 3)){
     $gameData['leaved'] = true;
     $infoText = "Dein Gegner hat das Spiel verlassen!";
     $my_status = 1;

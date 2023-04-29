@@ -128,6 +128,7 @@ class GameField {
         }
         return length;
     }
+
     setText(text, color = false){
         if(!this.textElement) return;
         this.textElement.innerText = text;
