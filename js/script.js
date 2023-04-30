@@ -79,6 +79,8 @@ class GameField {
         field.appendChild(info_container);
         document.getElementById("game_container").appendChild(field);
 
+        this.full_container = field;
+
         this.update().then(() => {});
 
         if(random_ships_as_default) this.placeShipsRandomly().then(() => {});
@@ -86,7 +88,7 @@ class GameField {
     checkField(x, y){
         if(this.field_status(this.fields, x, y)) return false;
 
-        if(this.field_status(this.fields, x-1, y-1) || this.field_status(this.fields, x+1, y+1) || this.field_status(this.fields, x-1, y+1) || this.field_status(this.fields, x+1, y-1)) return;
+        if(this.field_status(this.fields, x-1, y-1) || this.field_status(this.fields, x+1, y+1) || this.field_status(this.fields, x-1, y+1) || this.field_status(this.fields, x+1, y-1)) return false;
         let test = JSON.parse(JSON.stringify(this.fields));
         test[y][x] = {status: true};
         let length = this.ship_length(test, x, y)-1;
@@ -161,45 +163,62 @@ class GameField {
         }
         this.update().then(() => {});
     }
-    async placeShipsRandomly() {
-        while(await this.update()) {
-            for (let y = 0; y < this.h; y++) {
-                for (let x = 0; x < this.w; x++) {
-                    this.setField(x, y, false);
+    placeShipsRandomly() {
+        return new Promise(async function(resolve){
+            while(await this.update()) {
+                for (let y = 0; y < this.h; y++) {
+                    for (let x = 0; x < this.w; x++) {
+                        this.setField(x, y, false);
+                    }
+                }
+                for (const ship in this.ship_types) {
+                    let count = this.ship_types[ship].count;
+                    while (count > 0) {
+                        let shipLength = parseInt(ship);
+                        let shipPlaced = false;
+                        while (!shipPlaced) {
+                            let orientation = Math.floor(Math.random() * 2);
+                            let x = Math.floor(Math.random() * this.w);
+                            let y = Math.floor(Math.random() * this.h);
+                            let positions = [];
+                            let valid = true;
+                            for (let i = 0; i < shipLength; i++) {
+                                let posX = orientation ? x : x + i;
+                                let posY = orientation ? y + i : y;
+                                if (posX >= this.w || posY >= this.h || !this.checkField(posX, posY)) {
+                                    valid = false;
+                                    break;
+                                } else {
+                                    positions.push({x: posX, y: posY});
+                                }
+                            }
+                            if (valid) {
+                                for (const position of positions) {
+                                    this.setField(position.x, position.y, true);
+                                }
+                                shipPlaced = true;
+                            }
+                        }
+                        count--;
+                    }
                 }
             }
-            for (const ship in this.ship_types) {
-                let count = this.ship_types[ship].count;
-                while (count > 0) {
-                    let shipLength = parseInt(ship);
-                    let shipPlaced = false;
-                    while (!shipPlaced) {
-                        let orientation = Math.floor(Math.random() * 2);
-                        let x = Math.floor(Math.random() * this.w);
-                        let y = Math.floor(Math.random() * this.h);
-                        let positions = [];
-                        let valid = true;
-                        for (let i = 0; i < shipLength; i++) {
-                            let posX = orientation ? x : x + i;
-                            let posY = orientation ? y + i : y;
-                            if (posX >= this.w || posY >= this.h || !this.checkField(posX, posY)) {
-                                valid = false;
-                                break;
-                            } else {
-                                positions.push({x: posX, y: posY});
-                            }
-                        }
-                        if (valid) {
-                            for (const position of positions) {
-                                this.setField(position.x, position.y, true);
-                            }
-                            shipPlaced = true;
-                        }
+            resolve(true);
+        }.bind(this));
+    }
+    hit_random(){
+        let free_fields = [];
+        for(let y = 0; y < this.h; y++) {
+            for (let x = 0; x < this.w; x++) {
+                if (!this.fields[y][x].beaten) {
+                    if(this.checkField(x, y)) {
+                        free_fields.push({x: x, y: y});
                     }
-                    count--;
                 }
             }
         }
+        if(free_fields.length === 0) return false;
+        return free_fields[Math.floor(Math.random()*free_fields.length)];
     }
     scan_ships(){
         let ships = {};
@@ -263,6 +282,12 @@ class GameField {
                 }
                 for(let y = 0; y < this.h; y++) {
                     for (let x = 0; x < this.w; x++) {
+                        if(this.fields[y][x].beaten && !this.fields[y][x].element.classList.contains("beaten")){
+                            this.fields[y][x].element.classList.add("beaten");
+                        }
+                        if(!this.fields[y][x].beaten && this.fields[y][x].element.classList.contains("beaten")){
+                            this.fields[y][x].element.classList.remove("beaten");
+                        }
                         if (this.field_status(this.fields, x, y)) {
                             let teil = "one";
                             let rotation = false;
@@ -294,13 +319,6 @@ class GameField {
                             let new_src = "images/gameAssets/"+teil+(this.fields[y][x].beaten ? "_dest" : "")+".png";
                             if(new_src !== this.fields[y][x].element.children[0].src) this.fields[y][x].element.children[0].src = new_src;
                             this.fields[y][x].element.children[0].style.transform = "rotate("+(rotation ? 90 : 0)+"deg)";
-
-                            if(this.fields[y][x].beaten && !this.fields[y][x].element.classList.contains("beaten")){
-                                this.fields[y][x].element.classList.add("beaten");
-                            }
-                            if(!this.fields[y][x].beaten && this.fields[y][x].element.classList.contains("beaten")){
-                                this.fields[y][x].element.classList.remove("beaten");
-                            }
                         } else {
                             this.fields[y][x].element.children[0].style.display = "none";
                         }
@@ -318,13 +336,6 @@ class GameField {
 
                 this.fields[y][x].status = data[y][x].status;
                 this.fields[y][x].beaten = data[y][x].beaten;
-
-                if(this.fields[y][x].beaten && !this.fields[y][x].element.classList.contains("beaten")){
-                    this.fields[y][x].element.classList.add("beaten");
-                }
-                if(!this.fields[y][x].beaten && this.fields[y][x].element.classList.contains("beaten")){
-                    this.fields[y][x].element.classList.remove("beaten");
-                }
             }
         }
         this.update().then(() => {});
@@ -340,12 +351,23 @@ class GameField {
         }
         return data;
     }
+    won(){
+        let won = true;
+        for(let y = 0; y < this.h; y++) {
+            for (let x = 0; x < this.w; x++) {
+                if (this.fields[x][y].status && !this.fields[x][y].beaten) won = false;
+            }
+        }
+        return won;
+    }
 }
 class GegnerServer {
     constructor() {
         this.id = Math.random().toString()+Math.random().toString()+Math.random().toString();
-        this.update();
         this.next_hit = false;
+        this.start = new Date();
+        this.mode = "online";
+        this.update();
     }
     request(data) {
         const formData = new FormData();
@@ -390,21 +412,94 @@ class GegnerServer {
     update(){
         let hit = this.next_hit;
         this.next_hit = false;
-        this.request({id: this.id, version: my_field.gv, action: hit ? "hit" : "update", my_field: JSON.stringify(my_field.export()), hitX: hit ? hit.x : false, hitY: hit ? hit.y : false}).then(function(data){
-            if(data.id !== this.id) {
-                console.error("Invalid Player ID!");
-                if(document.getElementById("game_info_text")) document.getElementById("game_info_text").innerText = "Verbindungsfehler!";
-            } else {
-                if(document.getElementById("game_info_text")) document.getElementById("game_info_text").innerText = data.info_message;
 
-                my_field.setStatus(data.my_status);
-                gegner_field.setStatus(data.gegner_status);
+        if(this.mode === "online") {
+            this.request({
+                id: this.id,
+                version: my_field.gv,
+                action: hit ? "hit" : "update",
+                my_field: JSON.stringify(my_field.export()),
+                hitX: hit ? hit.x : false,
+                hitY: hit ? hit.y : false
+            }).then(async function (data) {
+                if (data.id !== this.id) {
+                    console.error("Invalid Player ID!");
+                    if (document.getElementById("game_info_text")) document.getElementById("game_info_text").innerText = "Verbindungsfehler!";
+                } else {
+                    if (document.getElementById("game_info_text")) document.getElementById("game_info_text").innerText = data.info_message;
 
-                my_field.update_field(data.my_field);
-                gegner_field.update_field(data.gegner_field);
+                    my_field.setStatus(data.my_status);
+                    gegner_field.setStatus(data.gegner_status);
+
+                    my_field.update_field(data.my_field);
+                    gegner_field.update_field(data.gegner_field);
+
+                    if(data.gegner_status === 2 && new Date()-this.start > 4000 && new Date()-this.start < 10000 && my_field.gv === 0){
+                        this.mode = "offline";
+                        this.dran = true;
+                        this.v = {
+                            "my_field": new GameField(0, my_field.w, my_field.h, my_field.ship_types, my_field.gv),
+                            "gegner_field": new GameField(3, my_field.w, my_field.h, my_field.ship_types, my_field.gv)
+                        };
+                        this.v.my_field.full_container.style.display = "none";
+                        this.v.gegner_field.full_container.style.display = "none";
+                        await this.v.my_field.placeShipsRandomly();
+                        this.v.my_field.setStatus(1);
+                    }
+                }
+                setTimeout(this.update.bind(this), 50);
+            }.bind(this));
+        } else if(this.mode === "offline"){
+            if(this.dran && hit){
+                if(!this.v.my_field.field_status(this.v.my_field.fields, hit.x, hit.y)) this.dran = false;
+                this.v.my_field.fields[hit.y][hit.x].beaten = true;
+                gegner_field.fields[hit.y][hit.x].beaten = true;
+                gegner_field.fields[hit.y][hit.x].status = this.v.my_field.fields[hit.y][hit.x].status;
+
+                if(!this.dran){
+                    setTimeout(function(){
+                        if(this.dran) return;
+                        let weiter = true;
+                        while(weiter) {
+                            let field = this.v.gegner_field.hit_random();
+                            if (!field) break;
+                            if (!my_field.field_status(this.v.gegner_field.fields, field.x, field.y)) weiter = false;
+                            my_field.fields[field.y][field.x].beaten = true;
+                            this.v.gegner_field.fields[field.y][field.x].beaten = true;
+                            this.v.gegner_field.fields[field.y][field.x].status = my_field.fields[field.y][field.x].status;
+                        }
+                        this.dran = true;
+                    }.bind(this), Math.random() > 0.1 ? Math.random()*500 : Math.random()*1000);
+                }
             }
+            if(this.v.my_field.won()){
+                this.dran = false;
+                if (document.getElementById("game_info_text")) document.getElementById("game_info_text").innerText = "Du hast Gewonnen!";
+
+                my_field.setStatus(1);
+                gegner_field.setStatus(5);
+            } else if(my_field.won()){
+                this.dran = false;
+                if (document.getElementById("game_info_text")) document.getElementById("game_info_text").innerText = "Dein Gegner hat gewonnen!";
+
+                my_field.setStatus(6);
+                gegner_field.setStatus(3);
+            } else if(this.dran){
+                if (document.getElementById("game_info_text")) document.getElementById("game_info_text").innerText = "Du bist dran!";
+
+                my_field.setStatus(1);
+                gegner_field.setStatus(4);
+            } else {
+                if (document.getElementById("game_info_text")) document.getElementById("game_info_text").innerText = "Dein Gegner ist dran!";
+
+                my_field.setStatus(1);
+                gegner_field.setStatus(3);
+            }
+
             setTimeout(this.update.bind(this), 50);
-        }.bind(this));
+        } else {
+            console.log("Error: Invalid mode!");
+        }
     }
     hit(x, y){
         this.next_hit = {x: x, y: y};
