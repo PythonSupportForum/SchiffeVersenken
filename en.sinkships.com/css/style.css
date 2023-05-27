@@ -1,0 +1,304 @@
+.clearfix::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+#game_info_text {
+    color: white;
+    text-align: center;
+    height: 80px;
+}
+
+#game_container {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    align-content: center;
+    flex-wrap: wrap;
+}
+.gameElement {
+    width: 400px;
+    height: auto;
+    border: 3px solid blue;
+    border-radius: 10px;
+    padding: 10px 10px 40px;
+    background-color: #1b1c28;
+    color: blue;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.gameElement .footer_info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.gameElement .footer_info ul{
+    text-align: left;
+}
+
+.gameElement li.needed_ship {
+    color: red;
+}
+.gameElement h2 {
+    text-align: center;
+    color: blue;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.gameElement button {
+    width: 100%;
+    height: 40px;
+    font-size: 24px;
+    background-color: green;
+    color: white;
+    cursor: pointer;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.gameElement .water_container {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.gameElement .water {
+    width: 350px;
+    height: 350px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.gameElement .water_container .row {
+    width: 100%;
+    box-sizing: border-box;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.gameElement .field img {
+    height: 100%;
+    width: 100%;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.gameElement .field {
+    float: left;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    cursor: pointer;
+    border: 1px solid lightblue;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.gameElement .field.beaten {
+    background-color: red;
+    background-image:
+            radial-gradient(ellipse at center, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%, rgba(0,0,0,0.7) 100%),
+            radial-gradient(ellipse at center, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%, rgba(0,0,0,0.5) 100%),
+            radial-gradient(ellipse at center, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%, rgba(0,0,0,0.7) 100%),
+            radial-gradient(ellipse at center, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%, rgba(0,0,0,0.9) 100%),
+            linear-gradient(45deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%, rgba(255,255,255,0.2) 100%),
+            linear-gradient(-45deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%, rgba(255,255,255,0.2) 100%);
+    background-blend-mode: lighten, lighten, lighten, lighten, lighten, lighten;
+    background-size: 20px 20px, 30px 30px, 40px 40px, 50px 50px, 100% 100%, 100% 100%;
+}
+html, body {
+    color: white;
+    font-family: GDT;
+    background-color: #1b1c28;
+}
+
+nav {
+    background-color: #121119;
+    min-height: 50px;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    z-index: 1;
+    box-shadow: 0 5px 10px -6px #121119;
+}
+
+
+.hb {
+    float: left;
+    width: 20%;
+    height: 50px;
+    margin-top: -1px;
+    border: none;
+    transition: all 0.5s;
+    z-index: 0;
+    background-color: #121119;
+}
+
+nav a {
+    display: block;
+    color: white;
+    text-align: center;
+    line-height: 50px;
+    text-decoration: none;
+    background-color: #121119;
+    z-index: 0;
+    font-family: Candara;
+    font-size: 23px;
+}
+
+button {
+    border-bottom: 2px solid transparent;
+    position: relative;
+    transition: border-bottom-color 0.3s ease-in-out;
+}
+
+button:hover {
+    border-bottom-color: #20a9f1;
+}
+
+button::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #20a9f1;
+    transition: width 0.3s ease-in-out;
+
+}
+
+button:hover::before {
+    width: 100%;
+}
+
+#logo {
+    width: 80px;
+    height: auto;
+    margin-left: 10px;
+    background-color: transparent;
+    transform: translateY(-15px);
+}
+
+main {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.leftbutton {
+    font-size: 70px;
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-family: helvetica, arial, sans-serif;
+    color: #121119;
+    transition: all 0.5s;
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: white;
+    background-color: transparent;
+    margin-top: 0;
+}
+
+
+.leftbox {
+    background-color: #121119;
+    width: 500px;
+    max-width: 95%;
+    min-height: 550px;
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 0 5px 0 #121119;
+    font-family: Helvetica;
+    padding: 25px;
+    font-size: 25px;
+    text-align: justify;
+    letter-spacing: 2px;
+}
+.rightbox {
+    width: 500px;
+    max-width: 95%;
+    min-height: 550px;
+    height: auto;
+    padding: 25px;
+    letter-spacing: 2px;
+}
+
+footer {
+    font-size: 18px;
+    text-align: center;
+    margin-top: 50px;
+    color: white;
+}
+footer a {
+    color: lightblue;
+    text-decoration: none;
+}
+
+article, .article {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+article h1, .article h1 {
+    font-size: 36px;
+    text-align: center;
+    color: #0080ff;
+    margin-top: 0;
+}
+article h2, .article h2 {
+    font-size: 24px;
+    color: #0080ff;
+    margin-top: 30px;
+}
+article p, .article p {
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+
+
+.additional-games .header {
+    text-align: center;
+    padding: 20px;
+}
+
+.additional-games .games-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px;
+}
+
+.additional-games .game {
+    background-color: black;
+    color: white;
+    padding: 20px;
+    margin: 20px;
+    width: 300px;
+    text-align: center;
+    border-radius: 10px;
+}
+.additional-games .play-btn {
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
